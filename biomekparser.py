@@ -1,5 +1,3 @@
-__author__ = 'theendless219'
-
 import pandas as pd
 import glob
 import sqlite3
