@@ -1,4 +1,3 @@
-__author__ = 'IVtB Lab'
 
 import pandas as pd
 import sqlite3
