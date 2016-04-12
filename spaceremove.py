@@ -1,5 +1,3 @@
-__author__ = 'IVtB Lab'
-
 import pandas as pd
 
 df = pd.read_csv('C:\Users\IVtB Lab\Desktop\LOPAC_Ver-384.csv').dropna(subset=['Name'])
