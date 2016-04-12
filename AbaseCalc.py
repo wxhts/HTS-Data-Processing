@@ -1,4 +1,3 @@
-__author__ = 'David Itenberg'
 #Apr, 12 2016
 
 import pandas as pd
