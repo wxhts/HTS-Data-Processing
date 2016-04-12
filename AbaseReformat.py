@@ -1,5 +1,3 @@
-__author__ = 'David Itenberg'
-
 import pandas as pd
 
 export_path = raw_input('Enter PATH of export file: ')
