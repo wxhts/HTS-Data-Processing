@@ -56,7 +56,7 @@ for c in range(1, 45):
 column_medians = pd.concat(col_med)
 row_medians = pd.concat(row_med)
 bcode_medians = pd.concat(bcode_med)
-well_medians = pd.concat(well_med) #new addition
+well_medians = pd.concat(well_med) 
 
 # Multiple joins to merge original dataframe with those containing median/SD calculations
 frame1 = pd.merge(df, column_medians, on=['Compound Plate', 'Colnum', 'Rownum'])
