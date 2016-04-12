@@ -1,4 +1,3 @@
-__author__ = 'David Itenberg'
 
 import pandas as pd
 import sqlite3
