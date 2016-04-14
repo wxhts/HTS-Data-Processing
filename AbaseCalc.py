@@ -1,4 +1,3 @@
-#Apr, 12 2016
 
 import pandas as pd
 
@@ -12,6 +11,10 @@ def calc_std(dataframe, column):
     stds = dataframe[column].std()
     return stds
 
+# Column and row ranges
+cnums = range(1, 45)
+rnums = range(1, 33)
+
 export_path = raw_input('Enter PATH of export file: ')
 assay_path = raw_input('Enter PATH of assay barcode file: ')
 final_path = raw_input('Enter PATH of output file: ')
@@ -24,7 +27,7 @@ bcode_ser = pd.Series(df1['Compound Plate'])
 # Column medians and standard deviations
 col_med = []
 for x in bcode_ser:
-    for i in range(5, 45):
+    for i in cnums:
         colnum_iso = df[(df['Compound Plate'] == x) & (df['Adj Well Literal'] == 'Sample') & (df['Colnum'] == i)]
         data1 = pd.DataFrame({'Compound Plate': colnum_iso['Compound Plate'], 'Colnum': colnum_iso['Colnum'], 'Col_Med': calc_median(colnum_iso, '% Well Effect'), 'Col_STD': calc_std(colnum_iso, '% Well Effect'), 'Rownum': colnum_iso['Rownum']})
         col_med.append(data1)
@@ -32,7 +35,7 @@ for x in bcode_ser:
 # Row medians and standard deviations
 row_med = []
 for y in bcode_ser:
-    for i in range(1, 33):
+    for i in rnums:
         rownum_iso = df[(df['Compound Plate'] == y) & (df['Adj Well Literal'] == 'Sample') & (df['Rownum'] == i)]
         data2 = pd.DataFrame({'Compound Plate': rownum_iso['Compound Plate'], 'Rownum': rownum_iso['Rownum'], 'Row_Med': calc_median(rownum_iso, '% Well Effect'), 'Row_STD': calc_std(rownum_iso, '% Well Effect'), 'Colnum': rownum_iso['Colnum']})
         row_med.append(data2)
@@ -46,8 +49,8 @@ for z in bcode_ser:
 
 # Well medians and standard deviations
 well_med = []
-for c in range(1, 45):
-    for r in range (1, 33):
+for c in cnums:
+    for r in rnums:
         well_iso = df[(df['Colnum'] == c) & (df['Rownum'] == r)]
         data4 = pd.DataFrame({'Compound Plate': well_iso['Compound Plate'], 'Well_Med': calc_median(well_iso, '% Well Effect'), 'Well_STD': calc_std(well_iso, '% Well Effect'), 'Colnum': well_iso['Colnum'], 'Rownum': well_iso['Rownum']})
         well_med.append(data4)
