@@ -12,13 +12,11 @@ input_path = raw_input('Enter the PATH of compound file: ')
 df = pd.read_csv(input_path)
 cmpd = df['CompoundID']
 
-count = 0
 query = ''
 for x in cmpd:
-    count += 1
-    if count == 1:
+    if x == cmpd[0]:
         query = '(' + stringify(x) + ','
-    elif count == len(cmpd):
+    elif x == cmpd[-1]:
         query = query + stringify(x) + ')'
     else:
         query = query + stringify(x) + ','
