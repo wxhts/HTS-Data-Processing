@@ -1,7 +1,20 @@
-
 import pandas as pd
 import sqlite3
 import csv
+
+def stringify(identifier):
+    return "'{}'".format(identifier)
+
+def build_query(dataframe):
+    query = ''
+    for x in dataframe:
+        if x == dataframe[0]:
+            query = '(' + stringify(x) + ','
+        elif x == dataframe[-1]:
+            query = query + stringify(x) + ')'
+        else:
+            query = query + stringify(x) + ','
+    return query
 
 conn = sqlite3.connect('C:\Users\IVtB Lab\Desktop\HTSCompounds.db')
 conn.text_factory = str
@@ -14,12 +27,11 @@ with open(output_path, 'wb') as output_file:
     csvwriter = csv.writer(output_file)
 
     df = pd.read_csv(hit_file)
-    comp_ser = pd.Series(df['CompoundID']).dropna()
-    #effect_ser = pd.Series(df['% Well Effect']).dropna()
+    compounds = df['CompoundID'].dropna()
+    cmpd = build_query(compounds)
 
-    for i in comp_ser:
-        findcompound = c.execute("SELECT EchoSource.Barcode, EchoSource.Well, EchoSource.Client_ID, ChinaSource.SMILES FROM EchoSource INNER JOIN ChinaSource ON EchoSource.Client_ID=ChinaSource.Client_ID WHERE EchoSource.Client_ID=?", [i])
-        csvwriter.writerow(findcompound.fetchone())
+    findcompound = c.execute("SELECT EchoSource.Barcode, EchoSource.Well, EchoSource.Client_ID, ChinaSource.SMILES FROM EchoSource INNER JOIN ChinaSource ON EchoSource.Client_ID=ChinaSource.Client_ID WHERE EchoSource.Client_ID IN " + cmpd)
+    csvwriter.writerows(findcompound.fetchall())
 
-    #effect_ser.to_csv(output_file, index=False)
+
 
