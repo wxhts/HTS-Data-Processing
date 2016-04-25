@@ -5,11 +5,13 @@ def stringify(identifier):
     return "'{}'".format(identifier)
 
 def build_query(dataframe):
+    count = 0 
     query = ''
     for x in dataframe:
-        if x == dataframe[0]:
+        count += 1
+        if count == 1:
             query = '(' + stringify(x) + ','
-        elif x == dataframe[-1]:
+        elif count == len(dataframe):
             query = query + stringify(x) + ')'
         else:
             query = query + stringify(x) + ','
