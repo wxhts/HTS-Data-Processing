@@ -7,10 +7,12 @@ def stringify(identifier):
 
 def build_query(dataframe):
     query = ''
+    count = 0
     for x in dataframe:
-        if x == dataframe[0]:
+        count += 1 
+        if count == 1:
             query = '(' + stringify(x) + ','
-        elif x == dataframe[-1]:
+        elif count == len(dataframe):
             query = query + stringify(x) + ')'
         else:
             query = query + stringify(x) + ','
