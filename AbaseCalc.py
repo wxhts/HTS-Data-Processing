@@ -1,5 +1,5 @@
-
 import pandas as pd
+import numpy as np
 
 #Median calculation
 def calc_median(dataframe, column):
@@ -10,6 +10,24 @@ def calc_median(dataframe, column):
 def calc_std(dataframe, column):
     stds = dataframe[column].std()
     return stds
+
+def np_median(lst):
+    return np.median(np.array(lst))
+
+#Calculate median absolute deviation
+def mad(dataframe, column):
+    median = dataframe[column].median()
+    median_list = []
+    for i in dataframe[column]:
+        dev = abs(i - median)
+        median_list.append(dev)
+    return np_median(median_list)
+
+#Calculate modified Z-score
+def mod_zscore(i, dataframe, column):
+    median = dataframe[column].median()
+    score = (0.6745 * (i - median))/mad(dataframe, column)
+    return score
 
 # Column and row ranges
 cnums = range(1, 45)
@@ -55,30 +73,31 @@ for c in cnums:
         data4 = pd.DataFrame({'Compound Plate': well_iso['Compound Plate'], 'Well_Med': calc_median(well_iso, '% Well Effect'), 'Well_STD': calc_std(well_iso, '% Well Effect'), 'Colnum': well_iso['Colnum'], 'Rownum': well_iso['Rownum']})
         well_med.append(data4)
 
+zscore = []
+for z in bcode_ser:
+    bcode_iso = df[(df['Compound Plate'] == z) & (df['Adj Well Literal'] == 'Sample')]
+    for i in bcode_iso['Data']:
+        data5 = pd.DataFrame({'Compound Plate': bcode_iso['Compound Plate'], 'ZScore': mod_zscore(i, bcode_iso, 'Data'), 'Colnum': bcode_iso['Colnum'], 'Rownum': bcode_iso['Rownum']})
+        zscore.append(data5)
+
+
 # Dataframes containing each median calculations for each plate
 column_medians = pd.concat(col_med)
 row_medians = pd.concat(row_med)
 bcode_medians = pd.concat(bcode_med)
-well_medians = pd.concat(well_med) 
+well_medians = pd.concat(well_med)
+zscores = pd.concat(zscore)
 
 # Multiple joins to merge original dataframe with those containing median/SD calculations
 frame1 = pd.merge(df, column_medians, on=['Compound Plate', 'Colnum', 'Rownum'])
 frame2 = pd.merge(frame1, row_medians, on=['Compound Plate', 'Colnum', 'Rownum'])
 frame3 = pd.merge(frame2, bcode_medians, on=['Compound Plate', 'Colnum', 'Rownum'])
 frame4 = pd.merge(frame3, well_medians, on=['Compound Plate', 'Colnum', 'Rownum'])
-
+frame5 = pd.merge(frame4, zscores, on=['Compound Plate', 'Colnum', 'Rownum'])
 # Appending of control wells for each plate to the final frame
 control_hpe = df[(df['Adj Well Literal'] == 'HPE')]
 control_zpe = df[(df['Adj Well Literal'] == 'ZPE')]
 
-final_frame = pd.concat([frame4, control_hpe, control_zpe])
+final_frame = pd.concat([frame5, control_hpe, control_zpe])
 
 final_frame.to_csv(final_path, index=False)
-
-
-
-
-
-
-
-
