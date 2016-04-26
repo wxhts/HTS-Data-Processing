@@ -14,7 +14,7 @@ def calc_std(dataframe, column):
 def np_median(lst):
     return np.median(np.array(lst))
 
-#Calculate median absolute deviation
+#Calculate median absolute deviation (MAD)
 def mad(dataframe, column):
     median = dataframe[column].median()
     median_list = []
@@ -26,7 +26,7 @@ def mad(dataframe, column):
 #Calculate modified Z-score
 def mod_zscore(i, dataframe, column):
     median = dataframe[column].median()
-    score = (0.6745 * (i - median))/mad(dataframe, column)
+    score = ((i - median)/mad(dataframe, column))
     return score
 
 # Column and row ranges
@@ -73,13 +73,13 @@ for c in cnums:
         data4 = pd.DataFrame({'Compound Plate': well_iso['Compound Plate'], 'Well_Med': calc_median(well_iso, '% Well Effect'), 'Well_STD': calc_std(well_iso, '% Well Effect'), 'Colnum': well_iso['Colnum'], 'Rownum': well_iso['Rownum']})
         well_med.append(data4)
 
+# Calculation of modified Z-score for each sample well in a plate for all plates
 zscore = []
 for z in bcode_ser:
     bcode_iso = df[(df['Compound Plate'] == z) & (df['Adj Well Literal'] == 'Sample')]
-    for i in bcode_iso['Data']:
-        data5 = pd.DataFrame({'Compound Plate': bcode_iso['Compound Plate'], 'ZScore': mod_zscore(i, bcode_iso, 'Data'), 'Colnum': bcode_iso['Colnum'], 'Rownum': bcode_iso['Rownum']})
+    for i,r in bcode_iso.iterrows():
+        data5 = pd.DataFrame({'Compound Plate': r['Compound Plate'], 'Modified ZScore': mod_zscore(r['Data'], bcode_iso, 'Data'), 'Colnum': r['Colnum'], 'Rownum': r['Rownum']}, index=[i])
         zscore.append(data5)
-
 
 # Dataframes containing each median calculations for each plate
 column_medians = pd.concat(col_med)
@@ -94,6 +94,7 @@ frame2 = pd.merge(frame1, row_medians, on=['Compound Plate', 'Colnum', 'Rownum']
 frame3 = pd.merge(frame2, bcode_medians, on=['Compound Plate', 'Colnum', 'Rownum'])
 frame4 = pd.merge(frame3, well_medians, on=['Compound Plate', 'Colnum', 'Rownum'])
 frame5 = pd.merge(frame4, zscores, on=['Compound Plate', 'Colnum', 'Rownum'])
+
 # Appending of control wells for each plate to the final frame
 control_hpe = df[(df['Adj Well Literal'] == 'HPE')]
 control_zpe = df[(df['Adj Well Literal'] == 'ZPE')]
