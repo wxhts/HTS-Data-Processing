@@ -58,12 +58,16 @@ for y in bcode_ser:
         data2 = pd.DataFrame({'Compound Plate': rownum_iso['Compound Plate'], 'Rownum': rownum_iso['Rownum'], 'Row_Med': calc_median(rownum_iso, '% Well Effect'), 'Row_STD': calc_std(rownum_iso, '% Well Effect'), 'Colnum': rownum_iso['Colnum']})
         row_med.append(data2)
 
-# Plate medians and standard deviations
+# Plate medians and standard deviations AND Calculation of modified Z-score for each sample well in a plate for all plates
 bcode_med = []
+zscore = []
 for z in bcode_ser:
     bcode_iso = df[(df['Compound Plate'] == z) & (df['Adj Well Literal'] == 'Sample')]
     data3 = pd.DataFrame({'Compound Plate': bcode_iso['Compound Plate'], 'Plate_Med': calc_median(bcode_iso, '% Well Effect'), 'Plate_STD': calc_std(bcode_iso, '% Well Effect'), 'Colnum': bcode_iso['Colnum'], 'Rownum': bcode_iso['Rownum']})
     bcode_med.append(data3)
+    for i,r in bcode_iso.iterrows():
+        data5 = pd.DataFrame({'Compound Plate': r['Compound Plate'], 'Modified ZScore': mod_zscore(r['Data'], bcode_iso, 'Data'), 'Colnum': r['Colnum'], 'Rownum': r['Rownum']}, index=[i])
+        zscore.append(data5)
 
 # Well medians and standard deviations
 well_med = []
@@ -72,14 +76,6 @@ for c in cnums:
         well_iso = df[(df['Colnum'] == c) & (df['Rownum'] == r)]
         data4 = pd.DataFrame({'Compound Plate': well_iso['Compound Plate'], 'Well_Med': calc_median(well_iso, '% Well Effect'), 'Well_STD': calc_std(well_iso, '% Well Effect'), 'Colnum': well_iso['Colnum'], 'Rownum': well_iso['Rownum']})
         well_med.append(data4)
-
-# Calculation of modified Z-score for each sample well in a plate for all plates
-zscore = []
-for z in bcode_ser:
-    bcode_iso = df[(df['Compound Plate'] == z) & (df['Adj Well Literal'] == 'Sample')]
-    for i,r in bcode_iso.iterrows():
-        data5 = pd.DataFrame({'Compound Plate': r['Compound Plate'], 'Modified ZScore': mod_zscore(r['Data'], bcode_iso, 'Data'), 'Colnum': r['Colnum'], 'Rownum': r['Rownum']}, index=[i])
-        zscore.append(data5)
 
 # Dataframes containing each median calculations for each plate
 column_medians = pd.concat(col_med)
