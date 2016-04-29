@@ -27,7 +27,7 @@ c = conn.cursor()
 
 hit_file = raw_input('Enter PATH for hit file: ')
 output_path = raw_input('Enter PATH for output file: ')
-structures = raw_input('Are structures need? (Y/N) ')
+structures = raw_input('Are structures needed? (Y/N) ')
 
 with open(output_path, 'wb') as output_file:
     csvwriter = csv.writer(output_file)
