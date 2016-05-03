@@ -16,8 +16,7 @@ def np_median(lst):
     return np.median(np.array(lst))
 
 #Calculate median absolute deviation (MAD)
-def mad(dataframe, column):
-    median = dataframe[column].median()
+def mad(median, dataframe, column):
     median_list = []
     for i in dataframe[column]:
         dev = abs(i - median)
@@ -27,7 +26,7 @@ def mad(dataframe, column):
 #Calculate modified Z-score
 def mod_zscore(i, dataframe, column):
     median = dataframe[column].median()
-    score = ((i - median)/mad(dataframe, column))
+    score = ((i - median)/mad(median, dataframe, column))
     return score
 
 # Column and row ranges
