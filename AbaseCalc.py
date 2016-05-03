@@ -16,17 +16,18 @@ def np_median(lst):
     return np.median(np.array(lst))
 
 #Calculate median absolute deviation (MAD)
-def mad(median, dataframe, column):
+def mad(dataframe, column):
     median_list = []
+    median = dataframe[column].median()
     for i in dataframe[column]:
         dev = abs(i - median)
         median_list.append(dev)
     return np_median(median_list)
 
 #Calculate modified Z-score
-def mod_zscore(i, dataframe, column):
+def mod_zscore(i, mad, dataframe, column):
     median = dataframe[column].median()
-    score = ((i - median)/mad(median, dataframe, column))
+    score = ((i - median)/mad)
     return score
 
 # Column and row ranges
@@ -63,8 +64,9 @@ for z in bcode_ser:
     bcode_iso = df[(df['Compound Plate'] == z) & (df['Adj Well Literal'] == 'Sample')]
     data3 = pd.DataFrame({'Compound Plate': bcode_iso['Compound Plate'], 'Plate_Med': calc_median(bcode_iso, '% Well Effect'), 'Plate_STD': calc_std(bcode_iso, '% Well Effect'), 'Colnum': bcode_iso['Colnum'], 'Rownum': bcode_iso['Rownum']})
     bcode_med.append(data3)
+    madder = mad(bcode_iso, 'Data')
     for i,r in bcode_iso.iterrows():
-        data5 = pd.DataFrame({'Compound Plate': r['Compound Plate'], 'Modified ZScore': mod_zscore(r['Data'], bcode_iso, 'Data'), 'Colnum': r['Colnum'], 'Rownum': r['Rownum']}, index=[i])
+        data5 = pd.DataFrame({'Compound Plate': r['Compound Plate'], 'Modified ZScore': mod_zscore(r['Data'], madder, bcode_iso, 'Data'), 'Colnum': r['Colnum'], 'Rownum': r['Rownum']}, index=[i])
         zscore.append(data5)
 
 # Well medians and standard deviations
