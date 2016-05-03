@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from itertools import product
 
 #Median calculation
 def calc_median(dataframe, column):
@@ -44,16 +45,14 @@ bcode_ser = pd.Series(df1['Compound Plate'])
 
 # Column medians and standard deviations
 col_med = []
-for x in bcode_ser:
-    for i in cnums:
+for x, i in product(bcode_ser, cnums):
         colnum_iso = df[(df['Compound Plate'] == x) & (df['Adj Well Literal'] == 'Sample') & (df['Colnum'] == i)]
         data1 = pd.DataFrame({'Compound Plate': colnum_iso['Compound Plate'], 'Colnum': colnum_iso['Colnum'], 'Col_Med': calc_median(colnum_iso, '% Well Effect'), 'Col_STD': calc_std(colnum_iso, '% Well Effect'), 'Rownum': colnum_iso['Rownum']})
         col_med.append(data1)
 
 # Row medians and standard deviations
 row_med = []
-for y in bcode_ser:
-    for i in rnums:
+for y, i in product(bcode_ser, rnums):
         rownum_iso = df[(df['Compound Plate'] == y) & (df['Adj Well Literal'] == 'Sample') & (df['Rownum'] == i)]
         data2 = pd.DataFrame({'Compound Plate': rownum_iso['Compound Plate'], 'Rownum': rownum_iso['Rownum'], 'Row_Med': calc_median(rownum_iso, '% Well Effect'), 'Row_STD': calc_std(rownum_iso, '% Well Effect'), 'Colnum': rownum_iso['Colnum']})
         row_med.append(data2)
@@ -71,8 +70,7 @@ for z in bcode_ser:
 
 # Well medians and standard deviations
 well_med = []
-for c in cnums:
-    for r in rnums:
+for c, r in product(cnums, rnums):
         well_iso = df[(df['Colnum'] == c) & (df['Rownum'] == r)]
         data4 = pd.DataFrame({'Compound Plate': well_iso['Compound Plate'], 'Well_Med': calc_median(well_iso, '% Well Effect'), 'Well_STD': calc_std(well_iso, '% Well Effect'), 'Colnum': well_iso['Colnum'], 'Rownum': well_iso['Rownum']})
         well_med.append(data4)
