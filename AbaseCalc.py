@@ -1,21 +1,25 @@
 import pandas as pd
 import numpy as np
 from itertools import product
+import warnings
 
-#Median calculation
+# Median calculation
 def calc_median(dataframe, column):
     medians = dataframe[column].median()
     return medians
 
-#Standard deviation calculation
+# Standard deviation calculation
 def calc_std(dataframe, column):
     stds = dataframe[column].std()
     return stds
 
+# Numpy median calculation with error handling
 def np_median(lst):
-    return np.median(np.array(lst))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        return np.median(np.array(lst))
 
-#Calculate median absolute deviation (MAD)
+# Calculate median absolute deviation (MAD)
 def mad(dataframe, column):
     median_list = []
     median = dataframe[column].median()
@@ -24,7 +28,7 @@ def mad(dataframe, column):
         median_list.append(dev)
     return np_median(median_list)
 
-#Calculate modified Z-score
+# Calculate modified Z-score
 def mod_zscore(i, mad, dataframe, column):
     median = dataframe[column].median()
     score = ((i - median)/mad)
