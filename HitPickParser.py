@@ -16,14 +16,3 @@ for files in report_files:
         destinationplate = bigframe[bigframe['Name'] == 'Destination_' + str(x)]
         if destinationplate.empty == False:
             destinationplate.to_csv(output_path + '\destination' + str(count) + '.csv', index=False)
-
-
-
-
-
-
-
-
-
-
-
