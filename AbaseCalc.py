@@ -1,7 +1,7 @@
-import pandas as pd
-import numpy as np
 from itertools import product
 import warnings
+import pandas as pd
+import numpy as np
 
 # Median calculation
 def calc_median(dataframe, column):
