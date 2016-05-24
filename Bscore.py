@@ -54,9 +54,8 @@ class Bscore:
     """ Fit the B-score of a well using the B-score algorithm from
     Malo, N., Hanley, J. A., Cerquozzi, S., Pelletier, J., & Nadon, R. (2006). Statistical practice in high-throughput
     screening data analysis. Nature biotechnology, 24(2), 167-175.
-    Brideau, C., Gunter, B., Pikounis, B.,
-    & Liaw, A. (2003). Improved statistical methods for hit selection in high-throughput screening.
-    Journal of biomolecular screening, 8(6), 634-647. """
+    Brideau, C., Gunter, B., Pikounis, B., & Liaw, A. (2003). Improved statistical methods for hit selection in
+    high-throughput screening. Journal of biomolecular screening, 8(6), 634-647. """
 
     def __init__(self, dataframe):
         self.frame = dataframe
