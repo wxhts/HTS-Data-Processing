@@ -43,7 +43,7 @@ class MedianPolish:
                 row_effects[r-1] += row_median
             median_row_effect = np.median(row_effects)
             row_effects -= median_row_effect
-            if median_row_effect <= 0:
+            if median_row_effect == 0:
                 count1 += 1
 
             for c in cnums:
@@ -53,7 +53,7 @@ class MedianPolish:
                 col_effects[c-5] += col_median
             median_col_effect = np.median(col_effects)
             col_effects -= median_col_effect
-            if median_col_effect <= 0:
+            if median_col_effect == 0:
                 count2 += 1
 
         return row_effects, col_effects
