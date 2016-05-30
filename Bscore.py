@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 
 
@@ -24,18 +23,19 @@ class MedianPolish:
             median_list.append(dev)
         return np.median(np.array(median_list))
 
-    def median_polish(self, max_iter=10):
+    def median_polish(self, max_iter=3):
         """ Tukey's median polish algorithm performed on a plate. Returns arrays for the row and column effects for
          each well"""
         cnums = range(5, 45)
         rnums = range(1, 33)
         row_effects = np.zeros(shape=32)
-        col_effects = np.zeros(shape=44)
+        col_effects = np.zeros(shape=40)
 
         for i in range(max_iter):
             for r in rnums:
                 dfr = self.frame[self.frame['Rownum'] == r]
                 row_median = dfr['Data'].median()
+                self.frame.ix[self.frame.Rownum == r, 'Data'] = self.frame.ix[self.frame.Rownum == r, 'Data'] - row_median
                 row_effects[r-1] += row_median
             median_row_effect = np.median(row_effects)
             row_effects -= median_row_effect
@@ -43,6 +43,7 @@ class MedianPolish:
             for c in cnums:
                 dfc = self.frame[self.frame['Colnum'] == c]
                 col_median = dfc['Data'].median()
+                self.frame.ix[self.frame.Colnum == c, 'Data'] = self.frame.ix[self.frame.Colnum == c, 'Data'] - col_median
                 col_effects[c-5] += col_median
             median_col_effect = np.median(col_effects)
             col_effects -= median_col_effect
@@ -54,14 +55,15 @@ class Bscore:
     """ Fit the B-score of a well using the B-score algorithm from
     Malo, N., Hanley, J. A., Cerquozzi, S., Pelletier, J., & Nadon, R. (2006). Statistical practice in high-throughput
     screening data analysis. Nature biotechnology, 24(2), 167-175.
-    Brideau, C., Gunter, B., Pikounis, B., & Liaw, A. (2003). Improved statistical methods for hit selection in
-    high-throughput screening. Journal of biomolecular screening, 8(6), 634-647. """
+    Brideau, C., Gunter, B., Pikounis, B.,
+    & Liaw, A. (2003). Improved statistical methods for hit selection in high-throughput screening.
+    Journal of biomolecular screening, 8(6), 634-647. """
 
     def __init__(self, dataframe):
-        self.frame = dataframe
+        self.data = dataframe
 
     def bscore(self):
-        inst = MedianPolish(self.frame)
+        inst = MedianPolish(self.data)
         effects = inst.median_polish()
         avg = inst.average()
 
@@ -73,7 +75,7 @@ class Bscore:
 
         residualz = []
         for c in cnums:
-            df = self.frame[self.frame['Colnum'] == c]
+            df = self.data[self.data['Colnum'] == c]
             for r in rnums:
                 df2 = df[df['Rownum'] == r]
                 res = int(df2['Data']) - (avg + row_eff[r-1] + col_eff[c-5])
@@ -86,3 +88,4 @@ class Bscore:
             bscores.append(score)
 
         return bscores
+
