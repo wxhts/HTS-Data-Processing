@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 
 
@@ -24,18 +23,15 @@ class MedianPolish:
             median_list.append(dev)
         return np.median(np.array(median_list))
 
-    def median_polish(self, max_iter=5):
+    def median_polish(self, max_iter=3):
         """ Tukey's median polish algorithm performed on a plate. Returns arrays for the row and column effects for
          each well"""
         cnums = range(5, 45)
         rnums = range(1, 33)
-        count1 = 0
-        count2 = 0
         row_effects = np.zeros(shape=32)
-        col_effects = np.zeros(shape=44)
+        col_effects = np.zeros(shape=40)
 
-        while count1 <= 2 and count2 <= 2:
-        #for i in range(max_iter):
+        for i in range(max_iter):
             for r in rnums:
                 dfr = self.frame[self.frame['Rownum'] == r]
                 row_median = dfr['Data'].median()
@@ -43,18 +39,14 @@ class MedianPolish:
                 row_effects[r-1] += row_median
             median_row_effect = np.median(row_effects)
             row_effects -= median_row_effect
-            if median_row_effect == 0:
-                count1 += 1
 
             for c in cnums:
                 dfc = self.frame[self.frame['Colnum'] == c]
                 col_median = dfc['Data'].median()
-                self.frame.ix[self.frame.Colnum == r, 'Data'] = self.frame.ix[self.frame.Colnum == r, 'Data'] - col_median
+                self.frame.ix[self.frame.Colnum == c, 'Data'] = self.frame.ix[self.frame.Colnum == c, 'Data'] - col_median
                 col_effects[c-5] += col_median
             median_col_effect = np.median(col_effects)
             col_effects -= median_col_effect
-            if median_col_effect == 0:
-                count2 += 1
 
         return row_effects, col_effects
 
@@ -96,5 +88,4 @@ class Bscore:
             bscores.append(score)
 
         return bscores
-        
-        
+
