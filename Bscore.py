@@ -25,7 +25,7 @@ class MedianPolish:
 
     def median_polish(self, max_iter=3):
         """ Tukey's median polish algorithm performed on a plate. Returns arrays for the row and column effects for
-         each well"""
+         each well in a 1536 well plate."""
         cnums = range(5, 45)
         rnums = range(1, 33)
         row_effects = np.zeros(shape=32)
