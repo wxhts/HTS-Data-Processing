@@ -9,7 +9,7 @@ df = pd.read_csv(export_path)
 df1 = pd.read_csv(assay_path)
 bcode_ser = pd.Series(df1['Compound Plate'])
 
-# Calculate Bscores for each well on a per plate basis
+# Calculate Bscores for each well in 1536 well plate on a per plate basis
 bscore_ls = []
 for z in bcode_ser:
     bcode_iso = df[(df['Compound Plate'] == z) & (df['Adj Well Literal'] == 'Sample')]
