@@ -1,9 +1,9 @@
 import pandas as pd
 
 
-def createWellIndex(export_path):
+def createWellIndex(file_path):
 
-    df = pd.read_csv(export_path)
+    df = pd.read_csv(file_path)
     wells = pd.Series(df['Well'])
     alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     num = '0123456789'
