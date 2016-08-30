@@ -37,7 +37,9 @@ def createWellIndex(file_path):
         rownums.append(n)
 
     # Add lists as new columns to dataframe
+    reversedRows = [(x * -1) for x in rownums]
     df['Column'] = colnum
     df['Row'] = rownums
+    df['Reverse Row'] = reversedRows
 
     return df
