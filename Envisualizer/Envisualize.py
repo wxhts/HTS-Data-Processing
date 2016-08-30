@@ -95,7 +95,8 @@ class EnVisualize:
         return zprime
 
     def percentInhibition(self):
-        """Calculates the percent inhibition for each well in the sample region of the plate"""
+        """Calculates the percent inhibition for each well in the sample region of the plate and returns with values
+        already added to self.plate Dataframe"""
 
         samplesX = range(1, 33)
         samplesY = range(5, 45)
@@ -106,11 +107,12 @@ class EnVisualize:
             rawData.append(result)
 
         samples = pd.concat(rawData)
-        samplesSeries = pd.Series(samples['Result'])
+        samplesSeries = pd.Series(samples['Result'], index=samples.index)
 
         inhibs = []
         for i in samplesSeries:
-            percentInhib = 100 - (100 * ((i - self.avg_hpe)/(self.avg_zpe - self.avg_hpe)))
+            percentInhib = round(100 - (100 * ((i - self.avg_hpe)/(self.avg_zpe - self.avg_hpe))), 2)
             inhibs.append((percentInhib))
 
-        return inhibs
+        self.plate['Percent Inhibition'] = pd.Series(inhibs, index=samplesSeries.index)
+        return self.plate
