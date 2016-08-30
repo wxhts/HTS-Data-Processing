@@ -10,7 +10,7 @@ def tuplize(alist):
     """Generates a list of 2-element lists"""
     tuped = []
     for i in range(0, len(alist), 2):
-        tuped.append([mylist[i], mylist[i+1]])
+        tuped.append([alist[i], alist[i+1]])
     return tuped
 
 input_file = raw_input('Please enter the PATH of the input file: ')
@@ -52,5 +52,5 @@ for plate2 in barcodes:
     graphs.append(hm)
 
 arranged_graphs = tuplize(graphs)
-visualization = gridplot(thingy)
+visualization = gridplot(arranged_graphs)
 show(visualization)
