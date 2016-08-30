@@ -1,9 +1,9 @@
 import pandas as pd
 
 
-def createWellIndex(export_path):
+def createWellIndex(file_path):
 
-    df = pd.read_csv(export_path)
+    df = pd.read_csv(file_path)
     wells = pd.Series(df['Well'])
     alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     num = '0123456789'
@@ -37,7 +37,9 @@ def createWellIndex(export_path):
         rownums.append(n)
 
     # Add lists as new columns to dataframe
+    reversedRows = [(x * -1) for x in rownums]
     df['Column'] = colnum
     df['Row'] = rownums
+    df['Reverse Row'] = reversedRows
 
     return df
