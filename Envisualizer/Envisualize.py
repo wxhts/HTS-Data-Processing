@@ -15,6 +15,7 @@ class EnVisualize:
         self.avg_zpe = 0
         self.std_hpe = 0
         self.std_zpe = 0
+        self.compounds = pd.read_csv('~\Desktop\DestinationsIndexed.csv')
 
     def CV(self, region):
         """Calculates percent CV of HPE and ZPE plate regions"""
@@ -98,6 +99,8 @@ class EnVisualize:
         """Calculates the percent inhibition for each well in the sample region of the plate and returns with values
         already added to self.plate Dataframe"""
 
+        pd.set_option('mode.chained_assignment', None)  # Silences pandas SettingWithCopy warning
+
         samplesX = range(1, 33)
         samplesY = range(5, 45)
 
@@ -115,4 +118,12 @@ class EnVisualize:
             inhibs.append((percentInhib))
 
         self.plate['Percent Inhibition'] = pd.Series(inhibs, index=samplesSeries.index)
+        return self.plate
+
+    def compoundAdder(self, compound_barcode):
+        """Join the Client_ID to each assay plate using a reference file of compound positions"""
+
+        compound_plate = self.compounds[(self.compounds['Barcode'] == compound_barcode)]
+        self.plate = pd.merge(self.plate, compound_plate, left_on=['Row', 'Column'], right_on=['Row', 'Column'])
+
         return self.plate
