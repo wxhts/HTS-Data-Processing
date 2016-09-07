@@ -1,8 +1,8 @@
 import csv
 from bokeh.charts import HeatMap, output_file, show
 from bokeh.io import gridplot
-from bokeh.palettes import RdYlBu3
-from pandas import concat
+from bokeh.palettes import RdYlBu5
+import pandas as pd
 from createWellIndex import createWellIndex
 from EnVisualize import EnVisualize
 
@@ -15,6 +15,7 @@ def tuplize(alist):
     return tuped
 
 input_file = raw_input('Please enter the PATH of the input file: ')
+log_file = raw_input('Please enter the PATH of the log file: ')
 project_code = raw_input('Please enter your project code: ')
 project_date = raw_input('Please enter the date: ')
 stats_output = raw_input('Please enter the PATH of the plate statistics file: ')
@@ -27,22 +28,26 @@ headers = ['Barcode', 'HPE CV', 'ZPE CV', 'Z-Prime', 'S/B']
 csvwriter.writerow(headers)
 
 collection = createWellIndex(input_file)
+log = pd.read_csv(log_file)
 barcodes = set(collection['Barcode'])
 
 # Calculates the plate statistics and outputs to one file. Calculates the percent inhibitions and outputs to another file.
 list_inhibitions = []
-for plate1 in barcodes:
+for plate1 in log.itertuples():
 
-    subset = collection[(collection['Barcode'] == plate1)]
+    assayplate = plate1[1]
+    compoundplate = plate1[2]
+    subset = collection[(collection['Barcode'] == assayplate)]
     workit = EnVisualize(subset)
 
-    stats = [plate1, workit.CV('hpe'), workit.CV('zpe'), workit.zPrime(), workit.signalToBackground()]
+    stats = [assayplate, workit.CV('hpe'), workit.CV('zpe'), workit.zPrime(), workit.signalToBackground()]
     csvwriter.writerow(stats)
 
-    calc_inhibitions = workit.percentInhibition()
-    list_inhibitions.append(calc_inhibitions)
+    workit.percentInhibition()
+    compound_add = workit.compoundAdder(compoundplate)
+    list_inhibitions.append(compound_add)
 
-all_inhibitions = concat(list_inhibitions)
+all_inhibitions = pd.concat(list_inhibitions)
 all_inhibitions.to_csv(inhibitions_output + ' ' + project_code + ' ' + project_date + '.csv', index=False)
 
 
@@ -50,8 +55,8 @@ all_inhibitions.to_csv(inhibitions_output + ' ' + project_code + ' ' + project_d
 output_file(viz_output + ' ' + project_code + ' ' + project_date + '.html')
 graphs = []
 for plate2 in barcodes:
-    aplate = all_inhibitions[(all_inhibitions['Barcode'] == plate2)]
-    hm = HeatMap(aplate, x='Column', y='Reverse Row', values='Percent Inhibition', palette=RdYlBu3, title=plate2, stat=None, hover_tool=True)
+    aplate = all_inhibitions[(all_inhibitions['Barcode_x'] == plate2)]
+    hm = HeatMap(aplate, x='Column', y='Reverse Row', values='Percent Inhibition', palette=RdYlBu5, title=plate2, stat=None, hover_tool=True)
     graphs.append(hm)
 
 arranged_graphs = tuplize(graphs)
