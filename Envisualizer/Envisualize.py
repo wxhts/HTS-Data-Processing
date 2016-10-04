@@ -88,7 +88,7 @@ class EnVisualize:
     def zPrime(self):
         """Calculates the Z-prime of the plate"""
 
-        numerator = 3 * (self.std_zpe - self.std_hpe)
+        numerator = 3 * (self.std_zpe + self.std_hpe)
         denominator = abs(self.avg_zpe - self.avg_hpe)
         prime = 1 - (numerator/denominator)
 
