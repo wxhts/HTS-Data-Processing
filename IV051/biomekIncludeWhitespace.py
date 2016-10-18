@@ -4,7 +4,7 @@ from createWellIndexBiomek import createWellIndexBiomek
 
 filesource = raw_input('Enter the PATH to export file: ')
 fileout = raw_input('Enter the PATH for output file:')
-plate = createWellIndex(filesource)
+plate = createWellIndexBiomek(filesource)
 
 boundx = range(1, 17)
 boundy = range(3, 23)
