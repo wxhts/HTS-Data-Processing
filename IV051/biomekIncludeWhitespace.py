@@ -1,6 +1,6 @@
 from itertools import product
 import pandas as pd
-from createWellIndex import createWellIndex
+from createWellIndexBiomek import createWellIndexBiomek
 
 filesource = raw_input('Enter the PATH to export file: ')
 fileout = raw_input('Enter the PATH for output file:')
