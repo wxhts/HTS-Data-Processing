@@ -1,9 +1,9 @@
 import pandas as pd
 
 
-def createWellIndex(file_path):
+def createWellIndexBiomek(file_path):
 
-    df = pd.read_csv(file_path, nrows=1537)
+    df = pd.read_csv(file_path, nrows=1538)
     wells = pd.Series(df['Well'])
     alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     num = '0123456789'
