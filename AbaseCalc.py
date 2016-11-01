@@ -1,7 +1,8 @@
-from itertools import product
-import warnings
 import pandas as pd
 import numpy as np
+from itertools import product
+import warnings
+
 
 # Median calculation
 def calc_median(dataframe, column):
@@ -41,6 +42,7 @@ rnums = range(1, 33)
 export_path = raw_input('Enter PATH of export file: ')
 assay_path = raw_input('Enter PATH of assay barcode file: ')
 final_path = raw_input('Enter PATH of output file: ')
+include_std = raw_input('Do you have standard control wells? [Y/N] ').upper()
 
 df = pd.read_csv(export_path)
 df1 = pd.read_csv(assay_path)
@@ -95,9 +97,14 @@ frame4 = pd.merge(frame3, well_medians, on=['Compound Plate', 'Colnum', 'Rownum'
 frame5 = pd.merge(frame4, zscores, on=['Compound Plate', 'Colnum', 'Rownum'])
 
 # Appending of control wells for each plate to the final frame
-control_hpe = df[(df['Adj Well Literal'] == 'HPE')]
-control_zpe = df[(df['Adj Well Literal'] == 'ZPE')]
-
-final_frame = pd.concat([frame5, control_hpe, control_zpe])
-
-final_frame.to_csv(final_path, index=False)
+if include_std == 'N':
+    control_hpe = df[(df['Adj Well Literal'] == 'HPE')]
+    control_zpe = df[(df['Adj Well Literal'] == 'ZPE')]
+    final_frame = pd.concat([frame5, control_hpe, control_zpe])
+    final_frame.to_csv(final_path, index=False)
+elif include_std == 'Y':
+    control_hpe = df[(df['Adj Well Literal'] == 'HPE')]
+    control_zpe = df[(df['Adj Well Literal'] == 'ZPE')]
+    control_std = df[(df['Adj Well Literal'] == 'STD')]
+    final_frame = pd.concat([frame5, control_hpe, control_zpe, control_std])
+    final_frame.to_csv(final_path, index=False)
